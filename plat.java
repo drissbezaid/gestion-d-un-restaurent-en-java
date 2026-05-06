@@ -22,7 +22,7 @@ public class plat {
 	}
 	@Override
 	public String toString() {
-		return "plat [nomp=" + nomp + ", prixp=" + prixp + " DH]";
+		return "plat [nomp=" + nomp + ", prixp=" + prixp + " DH]";//redefinition dyal l affichage//
 	}
 	
 	

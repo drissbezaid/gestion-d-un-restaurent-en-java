@@ -17,7 +17,7 @@ public class MenuUI extends JFrame {
         add(RestoUI.buildSidebar("Menu", this), BorderLayout.WEST);
 
         JPanel topBar = RestoUI.buildTopBar("Menu");
-        JButton btnAjouter  = RestoUI.actionButton("+ Ajouter", new Color(29, 158, 117), Color.WHITE);
+        JButton btnAjouter   = RestoUI.actionButton("+ Ajouter", new Color(29, 158, 117), Color.WHITE);
         JButton btnSupprimer = RestoUI.actionButton("Supprimer", new Color(252, 235, 235), new Color(163, 45, 45));
         JPanel btns = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 10));
         btns.setOpaque(false);
@@ -36,22 +36,34 @@ public class MenuUI extends JFrame {
 
         btnAjouter.addActionListener(e -> {
             String nom = JOptionPane.showInputDialog(this, "Nom du plat :");
-            if (nom != null && !nom.trim().isEmpty()) {
-                String prixStr = JOptionPane.showInputDialog(this, "Prix (DH) :");
-                if (prixStr != null && !prixStr.trim().isEmpty()) {
-                    try {
-                        double prix = Double.parseDouble(prixStr.trim());
-                        modelMenu.addElement(nom.trim() + "  —  " + prix + " DH");
-                    } catch (NumberFormatException ex) {
-                        JOptionPane.showMessageDialog(this, "Prix invalide !");
-                    }
+            if (nom == null || nom.trim().isEmpty()) return;
+            for (int i = 0; i < modelMenu.size(); i++) {
+                String existing = modelMenu.get(i).split("  —  ")[0].trim();
+                if (existing.equalsIgnoreCase(nom.trim())) {
+                    JOptionPane.showMessageDialog(this,
+                        "Le plat « " + nom.trim() + " » existe déjà dans le menu !",
+                        "Doublon", JOptionPane.WARNING_MESSAGE);
+                    return;
                 }
+            }
+            String prixStr = JOptionPane.showInputDialog(this, "Prix (DH) :");
+            if (prixStr == null || prixStr.trim().isEmpty()) return;
+            try {
+                double prix = Double.parseDouble(prixStr.trim());
+                modelMenu.addElement(nom.trim() + "  —  " + prix + " DH");
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Prix invalide !");
             }
         });
 
         btnSupprimer.addActionListener(e -> {
             int i = listMenu.getSelectedIndex();
-            if (i != -1) modelMenu.remove(i);
+            if (i != -1) {
+                int confirm = JOptionPane.showConfirmDialog(this,
+                    "Supprimer « " + modelMenu.get(i) + " » du menu ?",
+                    "Confirmation", JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.YES_OPTION) modelMenu.remove(i);
+            }
         });
 
         setVisible(true);

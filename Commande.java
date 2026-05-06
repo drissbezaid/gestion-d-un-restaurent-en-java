@@ -7,10 +7,10 @@ public class Commande {
 		this.numc=numc;
 		platcommander=new ArrayList<>();
 	}
-	public void ajouterplat(plat pc) {
+	public void ajouterplat(plat pc) { // zid plat l commande//
 		platcommander.add(pc);
 	}
-	public ArrayList<plat> getplatcommander(){
+	public ArrayList<plat> getplatcommander(){ // returni la liste dyal les commandes//
 		return platcommander;
 	}
 	

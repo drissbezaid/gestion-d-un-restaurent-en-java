@@ -12,13 +12,13 @@ public class RestoUI extends JFrame {
         setLayout(new BorderLayout());
         getContentPane().setBackground(new Color(248, 248, 246));
 
-        add(buildSidebar("", this), BorderLayout.WEST);
+        add(buildSidebar("", this), BorderLayout.WEST);// sidebar ouest//
 
-        JPanel center = new JPanel(new GridBagLayout());
+        JPanel center = new JPanel(new GridBagLayout()); //flexible panel layout//
         center.setBackground(new Color(248, 248, 246));
 
         JPanel welcome = new JPanel();
-        welcome.setLayout(new BoxLayout(welcome, BoxLayout.Y_AXIS));
+        welcome.setLayout(new BoxLayout(welcome, BoxLayout.Y_AXIS)); //alignement vertical//
         welcome.setBackground(new Color(248, 248, 246));
 
         JLabel title = new JLabel("Bienvenue");
@@ -125,6 +125,6 @@ public class RestoUI extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(RestoUI::new);
+        SwingUtilities.invokeLater(RestoUI::new); //main sans freeze//
     }
 }

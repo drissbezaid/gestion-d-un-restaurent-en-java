@@ -18,9 +18,8 @@ public class AdditionUI extends JFrame {
 
         add(RestoUI.buildSidebar("Addition", this), BorderLayout.WEST);
 
-        // ── Top bar ──────────────────────────────────────────────────────────
         JPanel topBar = RestoUI.buildTopBar("Addition");
-        JButton btnImprimer  = RestoUI.actionButton("Imprimer", new Color(29, 158, 117), Color.WHITE);
+        JButton btnImprimer      = RestoUI.actionButton("Imprimer", new Color(29, 158, 117), Color.WHITE);
         JButton btnReinitialiser = RestoUI.actionButton("Réinitialiser", new Color(252, 235, 235), new Color(163, 45, 45));
         JPanel btns = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 10));
         btns.setOpaque(false);
@@ -29,7 +28,6 @@ public class AdditionUI extends JFrame {
         topBar.add(btns, BorderLayout.EAST);
         add(topBar, BorderLayout.NORTH);
 
-        // ── Center: ticket de caisse ─────────────────────────────────────────
         JPanel ticketWrapper = new JPanel(new GridBagLayout());
         ticketWrapper.setBackground(new Color(248, 248, 246));
 
@@ -52,7 +50,7 @@ public class AdditionUI extends JFrame {
         lblTable.setForeground(new Color(120, 118, 110));
         lblTable.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JSeparator sep1 = new JSeparator();
+        JSeparator sep1 = new JSeparator();// - - - -  - -//
         sep1.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
         sep1.setForeground(new Color(220, 218, 210));
 
@@ -126,7 +124,6 @@ public class AdditionUI extends JFrame {
         ticketWrapper.add(ticket);
         add(ticketWrapper, BorderLayout.CENTER);
 
-        // ── Right panel ───────────────────────────────────────────────────────
         JPanel rightPanel = new JPanel(new BorderLayout());
         rightPanel.setPreferredSize(new Dimension(260, 0));
         rightPanel.setBackground(new Color(248, 248, 246));
@@ -138,7 +135,7 @@ public class AdditionUI extends JFrame {
         rightTitle.setPreferredSize(new Dimension(0, 36));
         rightPanel.add(rightTitle, BorderLayout.NORTH);
 
-        JList<String> listCommandes = new JList<>(new DefaultListModel<>());
+        JList<String> listCommandes = new JList<>(CommandeUI.modelCommande);
         listCommandes.setFont(new Font("SansSerif", Font.PLAIN, 13));
         listCommandes.setBackground(new Color(248, 248, 246));
         listCommandes.setSelectionBackground(new Color(225, 245, 238));
@@ -160,19 +157,16 @@ public class AdditionUI extends JFrame {
 
         add(rightPanel, BorderLayout.EAST);
 
-        // ── Actions ───────────────────────────────────────────────────────────
         btnManuel.addActionListener(e -> {
             String tStr = JOptionPane.showInputDialog(this, "Numéro de table :");
             if (tStr == null || tStr.trim().isEmpty()) return;
             try {
                 numTable = Integer.parseInt(tStr.trim());
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Numéro invalide !");
-                return;
+                JOptionPane.showMessageDialog(this, "Numéro invalide !"); return;
             }
             lblTable.setText("Table : " + numTable);
             modelAddition.clear();
-
             boolean continuer = true;
             while (continuer) {
                 String[] platsArray = new String[MenuUI.modelMenu.size()];
@@ -189,6 +183,36 @@ public class AdditionUI extends JFrame {
                 continuer = JOptionPane.showConfirmDialog(this, "Ajouter un autre plat ?", "Suite",
                     JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
             }
+        });
+
+        btnCharger.addActionListener(e -> {
+            String selected = listCommandes.getSelectedValue();
+            if (selected == null) {
+                JOptionPane.showMessageDialog(this,
+                    "Sélectionnez une commande dans la liste à droite.",
+                    "Aucune sélection", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            try {
+                String afterDash = selected.split("  —  ")[1];
+                String tableStr  = afterDash.split("  \\|")[0].replace("Table", "").trim();
+                numTable = Integer.parseInt(tableStr);
+            } catch (Exception ex) {
+                numTable = 0;
+            }
+            lblTable.setText("Table : " + (numTable == 0 ? "—" : numTable));
+            modelAddition.clear();
+            String[] parts = selected.split("  \\|  ");
+            if (parts.length <= 1) {
+                JOptionPane.showMessageDialog(this,
+                    "Cette commande ne contient aucun plat.",
+                    "Commande vide", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            for (int i = 1; i < parts.length; i++) {
+                modelAddition.addElement(parts[i].trim());
+            }
+            recalculerTotal();
         });
 
         btnReinitialiser.addActionListener(e -> {
